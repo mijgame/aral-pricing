@@ -13,7 +13,8 @@
         @import url('https://fonts.googleapis.com/css?family=Roboto');
 
         html, body {
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             font-family: 'Roboto', sans-serif;
         }
     </style>
@@ -22,10 +23,10 @@
     @foreach($pricing as $type)
         @if ($type->count() > 0)
         <h2>
-            {{ $type[0]->name }}
+            {{ $type[0]->name }} ({{ $type->last()->price / 100 }} {{ $type->last()->currency }}/L)
         </h2>
 
-        <div id="chart{{ $loop->index }}" style="height:{{ 100 / $pricing->count() - 1 }}vh"></div>
+        <div id="chart{{ $loop->index }}" style="max-height:{{ 100 / $pricing->count() - 1 }}vh"></div>
         @endif
     @endforeach
 
@@ -39,16 +40,14 @@
             new Morris.Line({
                 element: 'chart{{ $loop->index }}',
                 data: [
-                    @foreach($type as $item)
+                @foreach($type as $item)
                     { date: '{{ $item->created_at }}', value: {{ $item->price }} },
-                    @endforeach
+                @endforeach
                 ],
-                // The name of the data record attribute that contains x-values.
+                ymin: {{ $type->min('price') - 2 }},
+                ymax: {{ $type->max('price') + 2}},
                 xkey: 'date',
-                // A list of names of data record attributes that contain y-values.
                 ykeys: ['value'],
-                // Labels for the ykeys -- will be displayed when you hover over the
-                // chart.
                 labels: ['Value']
             });
         </script>
