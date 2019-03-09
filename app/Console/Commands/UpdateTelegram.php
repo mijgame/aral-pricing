@@ -29,7 +29,8 @@ class UpdateTelegram extends Command
      * @var array
      */
     protected $chats = [
-        -341401092
+        -341401092,
+        -258376401
     ];
 
     /**
