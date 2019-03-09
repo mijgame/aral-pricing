@@ -13,8 +13,7 @@
         @import url('https://fonts.googleapis.com/css?family=Roboto');
 
         html, body {
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
             font-family: 'Roboto', sans-serif;
         }
 
@@ -36,7 +35,7 @@
     @foreach($pricing as $type)
         @if ($type->count() > 0)
         <h2>
-            {{ $type[0]->name }} ({{ $type->last()->price / 100 }} {{ $type->last()->currency }}/L)
+            {{ $type[0]->product->station->name }} - {{ $type[0]->product->name }} ({{ $type->last()->price / 100 }} EUR/L)
         </h2>
 
         <div id="chart{{ $loop->index }}" style="max-height:{{ 100 / $pricing->count() - 1 }}vh"></div>

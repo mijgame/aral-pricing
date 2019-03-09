@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Aral\PriceFetcher;
+use App\GasStation;
+use App\Product;
+use App\Stations\PriceFetcher;
 use App\Price;
 use Illuminate\Console\Command;
 
@@ -32,16 +34,58 @@ class FetchPricing extends Command
         $requester = new PriceFetcher();
 
         $pricing = $requester->getPricing();
+        $stations = $this->getStations();
 
-        foreach ($pricing as $product) {
-            $price = new Price();
+        foreach ($pricing as $station => $products) {
+            foreach ($products as $product) {
+                $price = new Price();
 
-            $price->station = 'Aral'; // Can be dynamic later
-            $price->name = $product['name'];
-            $price->price = (float) str_replace(',', '.', $product['price']); // E.g. 132,90 = 132.90 as float
-            $price->currency = $product['currency']; // Always EUR
+                foreach ($stations[$station]['products'] as $sp) {
+                    if ($sp['name'] != $product['name']) {
+                        continue;
+                    }
 
-            $price->save();
+                    $price->product_id = $sp['id'];
+                    $price->price = $product['price'];
+                    $price->save();
+                }
+            }
         }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getStations()
+    {
+        $stations = GasStation::all();
+        $products = Product::all();
+
+        $stations = array_combine(
+            $stations->pluck('name')->toArray(),
+            $stations->toArray()
+        );
+
+        // Associate products with stations
+        foreach ($products as $product) {
+            foreach ($stations as &$station) {
+                if ($station['id'] !== $product['gas_station_id']) {
+                    continue;
+                }
+
+                if (!isset($station['products'])) {
+                    $station['products'] = [];
+                }
+
+                $station['products'][] = [
+                    'id' => $product['id'],
+                    'name' => $product['name']
+                ];
+
+                break;
+            }
+        }
+
+        return $stations;
     }
 }

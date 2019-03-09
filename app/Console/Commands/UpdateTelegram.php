@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Aral\PriceFetcher;
+use App\Stations\PriceFetcher;
 use App\Price;
 use Illuminate\Console\Command;
 use Telegram\Bot\Laravel\Facades\Telegram;
@@ -41,15 +41,23 @@ class UpdateTelegram extends Command
     public function handle()
     {
         // @Hack maybe don't use count to get the last X relevant rows?
-        $typeCount = count(PriceFetcher::TYPES);
-        $pricing = Price::orderByDesc('created_at')
-            ->limit($typeCount)
-            ->get();
+        $prices = Price::getLastWeek();
+        $toSend = [];
+
+        foreach ($prices as $type) {
+            $item = $type->last();
+
+            $toSend[] = [
+                'price' => $item->price / 100,
+                'name' => $item->product->name,
+                'station' => $item->product->station->name
+            ];
+        }
 
         $text = "<b>Huidige benzineprijzen in Elten:</b>\n";
 
-        foreach ($pricing as $price) {
-            $text .= $price->name . ' - €' . ($price->price / 100) . "/L \n";
+        foreach ($toSend as $item) {
+            $text .= $item['station'] . ' - ' . $item['name'] . ' - €' . $item['price'] . "/L \n";
         }
 
         foreach ($this->chats as $chat) {
