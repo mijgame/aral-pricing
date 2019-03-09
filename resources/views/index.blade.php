@@ -17,9 +17,22 @@
             overflow: hidden;
             font-family: 'Roboto', sans-serif;
         }
+
+        .logo {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 8px 8px;
+        }
     </style>
 </head>
 <body>
+    <div class="logo">
+        <a href="https://webarray.nl" target="_blank">
+            <img height="64" src="/img/logo.png" alt="Logo">
+        </a>
+    </div>
+
     @foreach($pricing as $type)
         @if ($type->count() > 0)
         <h2>
