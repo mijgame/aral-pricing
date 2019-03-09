@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
             ->everyTenMinutes();
 
         $schedule->command('telegram:update')
-            ->cron('0 0 19 1/2 * ? *');
+            ->cron('0 19 1/2 * *');
     }
 
     /**
