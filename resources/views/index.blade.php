@@ -56,6 +56,7 @@
                     { date: '{{ $item->created_at }}', value: {{ $item->price }} },
                 @endforeach
                 ],
+                smooth: false,
                 ymin: {{ $type->min('price') - 2 }},
                 ymax: {{ $type->max('price') + 2}},
                 xkey: 'date',
