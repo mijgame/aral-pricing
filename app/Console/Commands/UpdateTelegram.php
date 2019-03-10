@@ -40,7 +40,6 @@ class UpdateTelegram extends Command
      */
     public function handle()
     {
-        // @Hack maybe don't use count to get the last X relevant rows?
         $prices = Price::getLastWeek();
         $toSend = [];
 

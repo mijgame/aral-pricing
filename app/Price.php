@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Stations\DataPointCompressor;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,9 +43,13 @@ class Price extends Model
      */
     public static function getLastWeek()
     {
-        return Price::where('created_at', '>=', Carbon::now()->subWeek())
+        $data = Price::where('created_at', '>=', Carbon::now()->subWeek())
             ->with('product')
             ->get()
             ->groupBy('product.name');
+
+        $compressor = new DataPointCompressor();
+
+        return $compressor->compress($data);
     }
 }
