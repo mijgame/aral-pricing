@@ -38,11 +38,18 @@ class DataPointCompressor
         $result = collect([$product->first()]);
 
         for ($i = 1; $i < count($product); $i++) {
-            if ($product[$i - 1]->price === $product[$i]->price) {
+            if ($product[$i - 1]->price !== $product[$i]->price) {
+                $result[] = $product[$i];
                 continue;
             }
 
-            $result[] = $product[$i];
+            if (!isset($product[$i + 1])) {
+                continue;
+            }
+
+            if ($product[$i + 1]->price !== $product[$i]->price) {
+                $result[] = $product[$i];
+            }
         }
 
         if ($result->last() !== $end) {
