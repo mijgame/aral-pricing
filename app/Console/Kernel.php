@@ -29,6 +29,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('telegram:update')
             ->cron('0 19 1/2 * *');
+
+        $schedule->command('pricing:cleanup')
+            ->daily();
     }
 
     /**
