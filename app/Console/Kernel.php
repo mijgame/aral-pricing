@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('pricing:fetch')
-            ->everyTenMinutes();
+            ->everyFiveMinutes();
 
         $schedule->command('telegram:update')
             ->cron('0 19 1/2 * *');
